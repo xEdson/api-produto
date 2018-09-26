@@ -58,6 +58,7 @@
   </dependencies>
 
   <build>
+    <!--Plugin fabric8-->
     <finalName>api_produto</finalName>
     <plugins>
       <plugin>
