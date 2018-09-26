@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.meusprojetos.api-produto</groupId>
+  <artifactId>api-produto</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>api-produto</name>
+  <description>Demo project for Spring Boot</description>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.0.0.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.16.18</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>api_produto</finalName>
+    <plugins>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.25.2</version>
+        <configuration>
+          <images>
+            <image>
+              <name>idg/produto/${project.build.finalName}</name>
+              <build>
+                <from>openjdk:8u151-jdk-alpine3.7</from>
+                <entryPoint>java -jar /application/${project.build.finalName}.jar</entryPoint>
+                <assembly>
+                  <basedir>/application</basedir>
+                  <descriptorRef>artifact</descriptorRef>
+                  <inline>
+                    <id>assembly</id>
+                    <files>
+                      <file>
+                        <source>target/${project.build.finalName}.jar</source>
+                      </file>
+                    </files>
+                  </inline>
+                </assembly>
+                <tags>
+                  <tag>${project.version}</tag>
+                  <tag>latest</tag>
+                </tags>
+                <ports>
+                  <port>8080</port>
+                </ports>
+              </build>
+              <run>
+                <namingStrategy>alias</namingStrategy>
+              </run>
+              <alias>${project.build.finalName}</alias>
+            </image>
+          </images>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>2.0.1.RELEASE</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build-info</goal>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includeSystemScope>true</includeSystemScope>
+          <requiresUnpack>
+            <dependency>
+              <groupId>com.edenred</groupId>
+              <artifactId>api-etsp-commons</artifactId>
+            </dependency>
+          </requiresUnpack>
+          <additionalProperties>
+            <encoding.source>UTF-8</encoding.source>
+            <encoding.reporting>UTF-8</encoding.reporting>
+            <java.source>${java.version}</java.source>
+            <java.target>${java.version}</java.target>
+          </additionalProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
+</project>
